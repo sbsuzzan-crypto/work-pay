@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Test - Worker Payroll Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1f2937;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: #374151;
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        .status {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0.5rem;
+            font-weight: bold;
+        }
+        .success { background: #065f46; color: #10b981; }
+        .error { background: #7f1d1d; color: #ef4444; }
+        .warning { background: #78350f; color: #f59e0b; }
+        button {
+            background: #14b8a6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+        }
+        button:hover {
+            background: #0d9488;
+        }
+        .log {
+            background: #1f2937;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            text-align: left;
+            font-family: monospace;
+            font-size: 0.875rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Quick Test</h1>
+        <p>Testing if the Worker Payroll Manager loads correctly...</p>
+        
+        <div id="status" class="status warning">
+            ⏳ Testing in progress...
+        </div>
+        
+        <div id="log" class="log">
+            <div>Starting tests...</div>
+        </div>
+        
+        <div>
+            <button onclick="runTest()">Run Test Again</button>
+            <button onclick="openApp()">Open Full App</button>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function setStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        function runTest() {
+            log('Starting component test...');
+            setStatus('⏳ Testing in progress...', 'warning');
+            
+            // Clear previous log
+            document.getElementById('log').innerHTML = '<div>Starting tests...</div>';
+            
+            // Test 1: Check if CSS loads
+            log('Test 1: Checking CSS...');
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'css/styles.css';
+            link.onload = () => log('✅ CSS loaded successfully');
+            link.onerror = () => log('❌ CSS failed to load');
+            document.head.appendChild(link);
+            
+            // Test 2: Load external libraries
+            log('Test 2: Loading external libraries...');
+            const scripts = [
+                'https://cdn.tailwindcss.com',
+                'https://unpkg.com/lucide@latest/dist/umd/lucide.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'
+            ];
+            
+            let loadedScripts = 0;
+            scripts.forEach((src, index) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => {
+                    log(`✅ External library ${index + 1} loaded`);
+                    loadedScripts++;
+                    if (loadedScripts === scripts.length) {
+                        loadAppScripts();
+                    }
+                };
+                script.onerror = () => {
+                    log(`❌ External library ${index + 1} failed to load`);
+                    loadedScripts++;
+                    if (loadedScripts === scripts.length) {
+                        loadAppScripts();
+                    }
+                };
+                document.head.appendChild(script);
+            });
+        }
+
+        function loadAppScripts() {
+            log('Test 3: Loading app components...');
+            
+            const appScripts = [
+                'js/config.js',
+                'js/utils/storage.js',
+                'js/utils/ui.js',
+                'js/utils/api.js',
+                'js/utils/pdf.js',
+                'js/components/dashboard.js',
+                'js/components/workers.js',
+                'js/components/contracts.js',
+                'js/components/worklog.js',
+                'js/components/advances.js',
+                'js/components/payroll.js',
+                'js/components/reports.js',
+                'js/components/settings.js',
+                'js/components/modals.js',
+                'js/app.js'
+            ];
+            
+            let loadedAppScripts = 0;
+            let errors = [];
+            
+            appScripts.forEach((src, index) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => {
+                    log(`✅ ${src} loaded`);
+                    loadedAppScripts++;
+                    if (loadedAppScripts === appScripts.length) {
+                        checkComponents(errors);
+                    }
+                };
+                script.onerror = () => {
+                    log(`❌ ${src} failed to load`);
+                    errors.push(src);
+                    loadedAppScripts++;
+                    if (loadedAppScripts === appScripts.length) {
+                        checkComponents(errors);
+                    }
+                };
+                document.head.appendChild(script);
+            });
+        }
+
+        function checkComponents(errors) {
+            log('Test 4: Checking component availability...');
+            
+            const components = [
+                'CONFIG', 'Storage', 'UI', 'API', 'PDF', 'Dashboard', 
+                'Workers', 'Contracts', 'WorkLog', 'Advances', 
+                'Payroll', 'Reports', 'Settings', 'Modals', 'PayrollApp'
+            ];
+            
+            let available = 0;
+            let missing = [];
+            
+            components.forEach(comp => {
+                if (window[comp]) {
+                    log(`✅ ${comp} component available`);
+                    available++;
+                } else {
+                    log(`❌ ${comp} component missing`);
+                    missing.push(comp);
+                }
+            });
+            
+            // Final result
+            if (errors.length === 0 && missing.length === 0) {
+                log('🎉 All tests passed!');
+                setStatus('✅ All tests passed! App should work correctly.', 'success');
+            } else if (missing.length < 3) {
+                log(`⚠️ Some issues found but app might still work`);
+                setStatus(`⚠️ Minor issues found (${missing.length} missing components)`, 'warning');
+            } else {
+                log(`❌ Major issues found`);
+                setStatus(`❌ Major issues found (${errors.length} script errors, ${missing.length} missing components)`, 'error');
+            }
+        }
+
+        function openApp() {
+            window.open('index.html', '_blank');
+        }
+
+        // Auto-run test on load
+        setTimeout(runTest, 500);
+    </script>
+</body>
+</html> 

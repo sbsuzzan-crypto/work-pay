@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Payroll Manager</title>
+    
+    <!-- Basic Meta Tags -->
+    <meta name="description" content="Comprehensive offline worker payroll management application">
+    <meta name="theme-color" content="#14b8a6">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Payroll Manager">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- Stylesheets -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Toast Container -->
+    <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 1000;"></div>
+
+    <!-- Mobile Top Menu -->
+    <div id="mobileTopMenu" class="mobile-top-menu">
+        <div class="mobile-top-header">
+            <button id="mobileMenuToggle" class="mobile-menu-toggle">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+            <div id="mobileTopTitle" class="mobile-top-title">Dashboard</div>
+            <div class="w-10"></div> <!-- Spacer for centering -->
+        </div>
+        <div id="mobileExpandableMenu" class="mobile-expandable-menu">
+            <div class="mobile-expandable-menu-grid">
+                <a href="#" class="mobile-expandable-item" data-section="workers">
+                    <i data-lucide="users"></i>
+                    <span>Workers</span>
+                </a>
+                <a href="#" class="mobile-expandable-item" data-section="contracts">
+                    <i data-lucide="file-text"></i>
+                    <span>Contracts</span>
+                </a>
+                <a href="#" class="mobile-expandable-item" data-section="advances">
+                    <i data-lucide="dollar-sign"></i>
+                    <span>Advances</span>
+                </a>
+                <a href="#" class="mobile-expandable-item" data-section="reports">
+                    <i data-lucide="bar-chart"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="#" class="mobile-expandable-item" data-section="settings">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="#" class="mobile-expandable-item" onclick="window.Workers?.openWorkerModal()">
+                    <i data-lucide="user-plus"></i>
+                    <span>Add Worker</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Toggle -->
+    <button id="mobileNavToggle" class="mobile-nav-toggle fixed top-4 left-4 z-50 bg-gray-800 p-2 rounded-lg shadow-lg md:hidden">
+        <i data-lucide="menu" class="text-white"></i>
+    </button>
+
+    <!-- Mobile Overlay -->
+    <div id="mobileOverlay" class="mobile-overlay"></div>
+
+    <!-- Desktop Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="sidebar-title">Payroll Manager</h1>
+            <button id="sidebarToggle" class="sidebar-toggle">
+                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item sidebar-active" data-section="dashboard">
+                <i data-lucide="home"></i>
+                <span>Dashboard</span>
+                <div class="nav-item-tooltip">Dashboard</div>
+            </a>
+            <a href="#" class="nav-item" data-section="workers">
+                <i data-lucide="users"></i>
+                <span>Workers</span>
+                <div class="nav-item-tooltip">Workers</div>
+            </a>
+            <a href="#" class="nav-item" data-section="contracts">
+                <i data-lucide="file-text"></i>
+                <span>Contracts</span>
+                <div class="nav-item-tooltip">Contracts</div>
+            </a>
+            <a href="#" class="nav-item" data-section="worklog">
+                <i data-lucide="clock"></i>
+                <span>Log Work</span>
+                <div class="nav-item-tooltip">Log Work</div>
+            </a>
+            <a href="#" class="nav-item" data-section="advances">
+                <i data-lucide="dollar-sign"></i>
+                <span>Advances</span>
+                <div class="nav-item-tooltip">Advances</div>
+            </a>
+            <a href="#" class="nav-item" data-section="payroll">
+                <i data-lucide="receipt"></i>
+                <span>Payroll</span>
+                <div class="nav-item-tooltip">Payroll</div>
+            </a>
+            <a href="#" class="nav-item" data-section="reports">
+                <i data-lucide="bar-chart"></i>
+                <span>Reports</span>
+                <div class="nav-item-tooltip">Reports</div>
+            </a>
+            <a href="#" class="nav-item" data-section="settings">
+                <i data-lucide="settings"></i>
+                <span>Settings</span>
+                <div class="nav-item-tooltip">Settings</div>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="main-content">
+        <div class="content-wrapper">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="section">
+                <!-- Dashboard content will be loaded here -->
+            </div>
+
+            <!-- Workers Section -->
+            <div id="workers" class="section hidden">
+                <!-- Workers content will be loaded here -->
+            </div>
+
+            <!-- Contracts Section -->
+            <div id="contracts" class="section hidden">
+                <!-- Contracts content will be loaded here -->
+            </div>
+
+            <!-- Work Log Section -->
+            <div id="worklog" class="section hidden">
+                <!-- Work log content will be loaded here -->
+            </div>
+
+            <!-- Advances Section -->
+            <div id="advances" class="section hidden">
+                <!-- Advances content will be loaded here -->
+            </div>
+
+            <!-- Payroll Section -->
+            <div id="payroll" class="section hidden">
+                <!-- Payroll content will be loaded here -->
+            </div>
+
+            <!-- Reports Section -->
+            <div id="reports" class="section hidden">
+                <!-- Reports content will be loaded here -->
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settings" class="section hidden">
+                <!-- Settings content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <div id="mobileBottomNav" class="mobile-bottom-nav">
+        <div class="mobile-bottom-nav-grid">
+            <a href="#" class="mobile-nav-item active" data-section="dashboard">
+                <i data-lucide="home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="mobile-nav-item" data-section="workers">
+                <i data-lucide="users"></i>
+                <span>Workers</span>
+            </a>
+            <a href="#" class="mobile-nav-item" data-section="worklog">
+                <i data-lucide="clock"></i>
+                <span>Log Work</span>
+            </a>
+            <a href="#" class="mobile-nav-item" data-section="payroll">
+                <i data-lucide="receipt"></i>
+                <span>Payroll</span>
+            </a>
+            <button id="mobileMenuToggleBtn" class="mobile-nav-item mobile-menu-toggle-btn">
+                <i data-lucide="menu"></i>
+                <span>More</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Collapsible Menu -->
+    <div id="mobileCollapsibleMenu" class="mobile-collapsible-menu">
+        <div class="mobile-collapsible-menu-content">
+            <div class="mobile-collapsible-menu-header">
+                <h3>More Options</h3>
+                <button id="closeMobileMenu" class="close-mobile-menu-btn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="mobile-collapsible-menu-items">
+                <a href="#" class="mobile-collapsible-item" data-section="contracts">
+                    <i data-lucide="file-text"></i>
+                    <span>Contracts</span>
+                </a>
+                <a href="#" class="mobile-collapsible-item" data-section="advances">
+                    <i data-lucide="dollar-sign"></i>
+                    <span>Advances</span>
+                </a>
+                <a href="#" class="mobile-collapsible-item" data-section="reports">
+                    <i data-lucide="bar-chart"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="#" class="mobile-collapsible-item" data-section="settings">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </a>
+                <div class="mobile-collapsible-divider"></div>
+                <a href="#" class="mobile-collapsible-item" onclick="window.Workers?.openWorkerModal()">
+                    <i data-lucide="user-plus"></i>
+                    <span>Add Worker</span>
+                </a>
+                <a href="#" class="mobile-collapsible-item" onclick="window.Advances?.openAdvanceModal()">
+                    <i data-lucide="plus-circle"></i>
+                    <span>Log Advance</span>
+                </a>
+            </div>
+        </div>
+        <div class="mobile-collapsible-overlay"></div>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modalsContainer"></div>
+
+    <!-- Floating Action Button (Desktop only) -->
+    <div id="fabContainer" class="fab-container">
+        <button id="fabMain" class="fab">
+            <i data-lucide="plus"></i>
+        </button>
+        <div id="fabMenu" class="fab-menu hidden">
+            <button onclick="window.UI.showSection('workers'); window.Workers.openWorkerModal()" class="fab-item" title="Add Worker">
+                <i data-lucide="user-plus"></i>
+            </button>
+            <button onclick="window.UI.showSection('worklog')" class="fab-item" title="Log Work">
+                <i data-lucide="clock"></i>
+            </button>
+            <button onclick="window.UI.showSection('advances'); window.Advances.openAdvanceModal()" class="fab-item" title="Log Advance">
+                <i data-lucide="dollar-sign"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils/storage.js"></script>
+    <script src="js/utils/ui.js"></script>
+    <script src="js/utils/api.js"></script>
+    <script src="js/utils/pdf.js"></script>
+    <script src="js/components/dashboard.js"></script>
+    <script src="js/components/workers.js"></script>
+    <script src="js/components/contracts.js"></script>
+    <script src="js/components/worklog.js"></script>
+    <script src="js/components/advances.js"></script>
+    <script src="js/components/payroll.js"></script>
+    <script src="js/components/reports.js"></script>
+    <script src="js/components/settings.js"></script>
+    <script src="js/components/modals.js"></script>
+    <script src="js/app.js"></script>
+    
+    <!-- Initialization Script -->
+    <script>
+        // Ensure all components are loaded before initializing
+        function initializeApp() {
+            try {
+                console.log('Starting app initialization...');
+                
+                // Check if all required components exist
+                const requiredComponents = [
+                    'CONFIG', 'Storage', 'UI', 'Dashboard', 'Workers', 
+                    'Contracts', 'WorkLog', 'Advances', 'Payroll', 
+                    'Reports', 'Settings', 'Modals', 'PayrollApp'
+                ];
+                
+                const missingComponents = requiredComponents.filter(comp => !window[comp]);
+                
+                if (missingComponents.length > 0) {
+                    console.error('Missing components:', missingComponents);
+                    showFallbackError('Missing required components: ' + missingComponents.join(', '));
+                    return;
+                }
+                
+                // Initialize Lucide icons first
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+                
+                // Initialize the app
+                window.PayrollApp.init().catch(error => {
+                    console.error('App initialization failed:', error);
+                    showFallbackError('Application failed to initialize: ' + (error?.message || 'Unknown error'));
+                });
+                
+            } catch (error) {
+                console.error('Critical initialization error:', error);
+                showFallbackError('Critical error during initialization: ' + (error?.message || 'Unknown error'));
+            }
+        }
+        
+        // Fallback error display
+        function showFallbackError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #1f2937;
+                color: white;
+                padding: 2rem;
+                border-radius: 1rem;
+                border: 1px solid #ef4444;
+                max-width: 500px;
+                z-index: 9999;
+                text-align: center;
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            `;
+            
+            errorDiv.innerHTML = `
+                <h2 style="color: #ef4444; margin-bottom: 1rem;">⚠️ Application Error</h2>
+                <p style="margin-bottom: 1.5rem; color: #d1d5db;">${message}</p>
+                <button onclick="window.location.reload()" style="
+                    background: #ef4444;
+                    color: white;
+                    border: none;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 0.5rem;
+                    cursor: pointer;
+                    font-weight: 500;
+                ">Reload Page</button>
+            `;
+            
+            document.body.appendChild(errorDiv);
+        }
+        
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // Wait for DOM and all scripts to load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(initializeApp, 100); // Small delay to ensure all scripts are processed
+            });
+        } else {
+            setTimeout(initializeApp, 100);
+        }
+    </script>
+    
+    <!-- Additional utility functions -->
+    <script>
+        // Handle keyboard shortcuts globally
+        document.addEventListener('keydown', function(e) {
+            // Escape key to close modals
+            if (e.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal-overlay, .modal');
+                modals.forEach(modal => {
+                    if (modal && modal.remove) {
+                        modal.remove();
+                    }
+                });
+            }
+        });
+        
+        // Add smooth scrolling for better UX
+        document.documentElement.style.scrollBehavior = 'smooth';
+        
+        // Performance monitoring
+        window.addEventListener('load', function() {
+            const loadTime = performance.now();
+            console.log(`Application loaded in ${loadTime.toFixed(2)}ms`);
+            
+            // Remove any loading states
+            document.body.style.opacity = '1';
+            
+            // Initialize UI animations
+            document.body.classList.add('loaded');
+        });
+    </script>
+</body>
+</html> 

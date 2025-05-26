@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Payroll Manager - Portable</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1f2937, #374151);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #14b8a6, #0d9488);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 48px;
+            color: white;
+            font-weight: bold;
+        }
+        .title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #14b8a6;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0.8;
+        }
+        .launch-btn {
+            background: linear-gradient(135deg, #14b8a6, #0d9488);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .launch-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(20, 184, 166, 0.4);
+        }
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 40px;
+            text-align: left;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">$</div>
+        <h1 class="title">Worker Payroll Manager</h1>
+        <p class="subtitle">Portable Desktop Application</p>
+        
+        <a href="index.html" class="launch-btn" target="_blank">🚀 Launch Application</a>
+        <button onclick="openFullscreen()" class="launch-btn">📱 Open Fullscreen</button>
+        <button onclick="openNewWindow()" class="launch-btn">🖥️ Open in New Window</button>
+        <button onclick="downloadApp()" class="launch-btn">💾 Download Offline Version</button>
+        
+        <div class="instructions">
+            <h3>📋 How to Use:</h3>
+            <div class="step">
+                <strong>1. Launch:</strong> Click "Launch Application" to open in a new tab
+            </div>
+            <div class="step">
+                <strong>2. Fullscreen:</strong> Click "Open Fullscreen" for app-like experience
+            </div>
+            <div class="step">
+                <strong>3. Bookmark:</strong> Bookmark the app page for quick access
+            </div>
+            <div class="step">
+                <strong>4. Desktop Shortcut:</strong> Create a desktop shortcut to this file
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>✨ Features:</h3>
+            <div class="step">✅ Works completely offline</div>
+            <div class="step">✅ No installation required</div>
+            <div class="step">✅ All data stored locally</div>
+            <div class="step">✅ Full payroll management</div>
+            <div class="step">✅ PDF generation</div>
+            <div class="step">✅ Data export/import</div>
+        </div>
+    </div>
+    
+    <script>
+        function openFullscreen() {
+            window.open('index.html', '_blank', 'fullscreen=yes,scrollbars=yes,resizable=yes');
+        }
+        
+        function openNewWindow() {
+            window.open('index.html', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no,location=no');
+        }
+        
+        function downloadApp() {
+            // Create a simple download package
+            const files = [
+                'index.html',
+                'portable-app.html',
+                'css/styles.css',
+                'js/config.js',
+                'js/app.js',
+                'js/utils/storage.js',
+                'js/utils/ui.js',
+                'js/utils/api.js',
+                'js/utils/pdf.js',
+                'js/components/dashboard.js',
+                'js/components/workers.js',
+                'js/components/contracts.js',
+                'js/components/worklog.js',
+                'js/components/advances.js',
+                'js/components/payroll.js',
+                'js/components/reports.js',
+                'js/components/settings.js',
+                'js/components/modals.js'
+            ];
+            
+            alert('To download the offline version:\n\n1. Right-click this page\n2. Select "Save As" or "Save Page As"\n3. Choose "Complete Webpage"\n4. This will save all files needed to run offline\n\nAlternatively, copy the entire folder to a USB drive or share it with others!');
+        }
+        
+        // Auto-launch if requested
+        if (window.location.hash === '#autolaunch') {
+            setTimeout(() => {
+                window.open('index.html', '_blank');
+            }, 1000);
+        }
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                window.open('index.html', '_blank');
+            }
+            if (e.key === 'f' || e.key === 'F') {
+                openFullscreen();
+            }
+            if (e.key === 'n' || e.key === 'N') {
+                openNewWindow();
+            }
+        });
+        
+        // Add some animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.launch-btn');
+            buttons.forEach((btn, index) => {
+                btn.style.animationDelay = (index * 0.1) + 's';
+                btn.style.animation = 'fadeInUp 0.6s ease forwards';
+            });
+        });
+    </script>
+    
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .launch-btn {
+            opacity: 0;
+        }
+        
+        .instructions {
+            animation: fadeInUp 0.8s ease 0.5s forwards;
+            opacity: 0;
+        }
+    </style>
+</body>
+</html> 

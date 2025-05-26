@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Payroll Manager - Test</title>
+    
+    <!-- Stylesheets -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Test Container -->
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
+            <div id="testStatus" class="mb-6">
+                <div class="loading-spinner large primary mx-auto mb-4"></div>
+                <h2 class="text-xl font-bold text-teal-400 mb-2">Testing Application...</h2>
+                <p class="text-gray-300">Checking if all components load correctly</p>
+            </div>
+            
+            <div id="testResults" class="hidden">
+                <h2 class="text-xl font-bold mb-4">Test Results</h2>
+                <div id="componentsList" class="text-left space-y-2 mb-6"></div>
+                <button onclick="openFullApp()" class="w-full bg-teal-600 hover:bg-teal-700 px-4 py-2 rounded-lg">
+                    Open Full Application
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils/storage.js"></script>
+    <script src="js/utils/ui.js"></script>
+    <script src="js/utils/api.js"></script>
+    <script src="js/utils/pdf.js"></script>
+    <script src="js/components/dashboard.js"></script>
+    <script src="js/components/workers.js"></script>
+    <script src="js/components/contracts.js"></script>
+    <script src="js/components/worklog.js"></script>
+    <script src="js/components/advances.js"></script>
+    <script src="js/components/payroll.js"></script>
+    <script src="js/components/reports.js"></script>
+    <script src="js/components/settings.js"></script>
+    <script src="js/components/modals.js"></script>
+    <script src="js/app.js"></script>
+    
+    <script>
+        function testComponents() {
+            const components = [
+                'CONFIG', 'Storage', 'UI', 'API', 'PDF', 'Dashboard', 
+                'Workers', 'Contracts', 'WorkLog', 'Advances', 
+                'Payroll', 'Reports', 'Settings', 'Modals', 'PayrollApp'
+            ];
+            
+            const results = [];
+            let allPassed = true;
+            
+            components.forEach(comp => {
+                const exists = !!window[comp];
+                results.push({
+                    name: comp,
+                    status: exists,
+                    icon: exists ? 'check-circle' : 'x-circle',
+                    color: exists ? 'text-green-400' : 'text-red-400'
+                });
+                
+                if (!exists) allPassed = false;
+            });
+            
+            // Display results
+            const testStatus = document.getElementById('testStatus');
+            const testResults = document.getElementById('testResults');
+            const componentsList = document.getElementById('componentsList');
+            
+            testStatus.classList.add('hidden');
+            testResults.classList.remove('hidden');
+            
+            componentsList.innerHTML = results.map(result => `
+                <div class="flex items-center justify-between p-2 bg-gray-700 rounded">
+                    <span class="font-medium">${result.name}</span>
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="${result.icon}" class="w-4 h-4 ${result.color}"></i>
+                        <span class="${result.color} text-sm">${result.status ? 'OK' : 'MISSING'}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Initialize icons
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+            
+            // Show overall status
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `p-3 rounded-lg mb-4 ${allPassed ? 'bg-green-900 text-green-200' : 'bg-red-900 text-red-200'}`;
+            statusDiv.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <i data-lucide="${allPassed ? 'check-circle' : 'alert-triangle'}" class="w-5 h-5"></i>
+                    <span class="font-semibold">${allPassed ? 'All components loaded successfully!' : 'Some components failed to load'}</span>
+                </div>
+            `;
+            
+            testResults.insertBefore(statusDiv, componentsList);
+            
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        }
+        
+        function openFullApp() {
+            window.location.href = 'index.html';
+        }
+        
+        // Run test after a short delay
+        setTimeout(testComponents, 1000);
+    </script>
+</body>
+</html> 
